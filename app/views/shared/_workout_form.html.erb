@@ -1,0 +1,10 @@
+<%= form_for(@workout) do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
+  <div class="">
+    <%= f.text_field :name, placeholder: "Name your workout..." %>
+  </div>
+  <div class="">
+    <%= f.text_area :log, placeholder: "Compose new workout..." %>
+  </div>
+  <%= f.submit "Post", class: "btn btn-large btn-primary" %>
+<% end %>

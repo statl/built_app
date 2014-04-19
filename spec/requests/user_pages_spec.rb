@@ -53,10 +53,20 @@ describe "User pages" do
   
   describe "profile page" do
     let(:user) { FactoryGirl.create(:user) }
+	let!(:w1) { FactoryGirl.create(:workout, user: user, name: "Foo", log: "Lorem ipsum") }
+    let!(:w2) { FactoryGirl.create(:workout, user: user, name: "Bar", log: "Dolor sit amet") }
     before { visit user_path(user) }
 
     it { should have_content(user.name) }
     it { should have_title(user.name) }
+	
+	describe "workouts" do
+      it { should have_content(w1.name) }
+      it { should have_content(w2.name) }
+	  it { should have_content(w1.log) }
+      it { should have_content(w2.log) }
+      it { should have_content(user.workouts.count) }
+    end
   end
 
   describe "signup page" do

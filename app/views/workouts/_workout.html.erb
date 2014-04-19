@@ -1,0 +1,14 @@
+<li>
+  <span class="content">
+	<h4><%= workout.name %></h4>
+	<p><%= workout.log %></p>
+  </span>
+  <span class="timestamp">
+    Posted <%= workout.created_at.to_s(:long)  %>.
+  </span>
+  <% if current_user?(workout.user) %>
+    <%= link_to "delete", workout, method: :delete,
+                                     data: { confirm: "You sure?" },
+                                     title: workout.name %>
+  <% end %>
+</li>

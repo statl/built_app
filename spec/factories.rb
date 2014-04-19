@@ -9,4 +9,10 @@ FactoryGirl.define do
       admin true
     end
   end
+  
+  factory :workout do
+    name "Lorem ipsum"
+	log "Dolor sit amet"
+    user
+  end
 end

@@ -82,6 +82,19 @@ describe "Authentication" do
           it { should have_title('Sign in') }
         end
       end
+	  
+	  describe "in the Workouts controller" do
+
+        describe "submitting to the create action" do
+          before { post workouts_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete workout_path(FactoryGirl.create(:workout)) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
     end
 	
 	describe "as wrong user" do

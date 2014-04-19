@@ -17,6 +17,8 @@ describe User do
   it { should respond_to(:remember_token) }
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
+  it { should respond_to(:workouts) }
+  it { should respond_to(:feed) }
 
   it { should be_valid }
   it { should_not be_admin }
@@ -123,6 +125,40 @@ describe User do
   describe "remember token" do
     before { @user.save }
     its(:remember_token) { should_not be_blank }
+  end
+
+  describe "workout associations" do
+
+    before { @user.save }
+    let!(:older_workout) do
+      FactoryGirl.create(:workout, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_workout) do
+      FactoryGirl.create(:workout, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have the right workouts in the right order" do
+      expect(@user.workouts.to_a).to eq [newer_workout, older_workout]
+    end
+	
+	it "should destroy associated workouts" do
+      workouts = @user.workouts.to_a
+      @user.destroy
+      expect(workouts).not_to be_empty
+      workouts.each do |workout|
+        expect(Workout.where(id: workout.id)).to be_empty
+      end
+    end
+	
+	describe "status" do
+      let(:unfollowed_post) do
+        FactoryGirl.create(:workout, user: FactoryGirl.create(:user))
+      end
+
+      its(:feed) { should include(newer_workout) }
+      its(:feed) { should include(older_workout) }
+      its(:feed) { should_not include(unfollowed_post) }
+    end
   end
 end
 
