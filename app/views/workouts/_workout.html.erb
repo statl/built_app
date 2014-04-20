@@ -1,7 +1,7 @@
 <li>
   <span class="content">
 	<h4><%= workout.name %></h4>
-	<p><%= workout.log %></p>
+	<p><%= wrap(workout.log) %></p>
   </span>
   <span class="timestamp">
     Posted <%= workout.created_at.to_s(:long)  %>.
