@@ -4,6 +4,7 @@ class WorkoutsController < ApplicationController
 
   def create
 	@workout = current_user.workouts.build(workout_params)
+	@workout.log.gsub!(/\n/, '<br/>')
     if @workout.save
       flash[:success] = "Workout created!"
       redirect_to root_url
