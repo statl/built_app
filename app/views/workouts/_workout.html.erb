@@ -6,7 +6,7 @@
   <span class="timestamp">
     Posted <%= workout.created_at.to_s(:long)  %>.
   </span>
-  <% if current_user?(workout.user) %>
+  <% if current_user?(workout.user.nickname) %>
     <%= link_to "delete", workout, method: :delete,
                                      data: { confirm: "You sure?" },
                                      title: workout.name %>

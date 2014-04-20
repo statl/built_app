@@ -1,5 +1,5 @@
 BuiltApp::Application.routes.draw do
-  resources :users
+  resources :users, only: [:index, :create]
   resources :sessions, only: [:new, :create, :destroy] 
   resources :workouts, only: [:create, :destroy]  
   root 'static_pages#home'
@@ -9,6 +9,13 @@ BuiltApp::Application.routes.draw do
   match '/help',	to: 'static_pages#help',	via: 'get'
   match '/about',	to: 'static_pages#about',	via: 'get'
   match '/contact', to: 'static_pages#contact',	via: 'get'
+  match '/:nickname', to: 'users#show', via: 'get', as: 'user'
+  match '/:nickname/new', to: 'users#new', via: 'get', as: 'new_user'
+  match '/:nickname/edit', to: 'users#edit', via: 'get', as: 'edit_user'
+  match '/:nickname', to: 'users#update', via: 'patch'
+  match '/:nickname', to: 'users#update', via: 'put'
+  match '/:nickname', to: 'users#destroy', via: 'delete'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

@@ -2,13 +2,14 @@ class UsersController < ApplicationController
   before_action :signed_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
+  include WorkoutsHelper
   
   def index
 	@users = User.paginate(page: params[:page])
   end
   
   def show
-    @user = User.find(params[:id])
+    @user = User.find_by_nickname(params[:nickname])
 	@workouts = @user.workouts.paginate(page: params[:page])
   end
   
@@ -22,7 +23,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       flash[:success] = "Profile updated"
-      redirect_to @user
+      redirect_to user_path
     else
       render 'edit'
     end
@@ -33,7 +34,7 @@ class UsersController < ApplicationController
     if @user.save
 	  sign_in @user
 	  flash[:success] = "Welcome to the I am Built Test App!"
-      redirect_to @user
+      redirect_to root_url
     else
       render 'new'
     end
@@ -49,13 +50,14 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation)
+                                   :password_confirmation,
+								   :nickname)
     end
   
     # Before filters
 
     def correct_user
-      @user = User.find(params[:id])
+      @user = User.find_by_nickname(params[:nickname])
       redirect_to(root_url) unless current_user?(@user)
     end
 	

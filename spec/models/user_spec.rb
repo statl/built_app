@@ -4,7 +4,8 @@ describe User do
 
   before do
     @user = User.new(name: "Example User", email: "user@example.com",
-                     password: "foobar", password_confirmation: "foobar")
+                     password: "foobar", password_confirmation: "foobar",
+					 nickname: "mruser")
   end
 
   subject { @user }
@@ -19,6 +20,7 @@ describe User do
   it { should respond_to(:admin) }
   it { should respond_to(:workouts) }
   it { should respond_to(:feed) }
+  it { should respond_to(:nickname) }
 
   it { should be_valid }
   it { should_not be_admin }
@@ -45,6 +47,62 @@ describe User do
   describe "when name is too long" do
     before { @user.name = "a" * 51 }
     it { should_not be_valid }
+  end
+  
+  describe "when nickname is too long" do
+    before { @user.nickname = "a" * 51 }
+    it { should_not be_valid }
+  end
+  
+  describe "when nickname is too short" do
+    before { @user.nickname = "a" * 3 }
+    it { should_not be_valid }
+  end
+  
+  describe "when nickname is not present" do
+    before { @user.nickname = " " }
+    it { should_not be_valid }
+  end
+  
+  describe "when nickname format is invalid" do
+    it "should be invalid" do
+      nicknames = ["u ser", "u/ser", "u\\ser", "u*ser", "u'ser", "u\"ser",
+				   "u.ser", "u,ser", "u;ser", "u:ser"]
+      nicknames.each do |invalid_nickname|
+        @user.nickname = invalid_nickname
+        expect(@user).not_to be_valid
+      end
+    end
+  end
+  
+  describe "when nickname format is valid" do
+    it "should be valid" do
+      nicknames = %w[user A_US-ER user9 UuSsEeRr]
+      nicknames.each do |valid_nickname|
+        @user.nickname = valid_nickname
+        expect(@user).to be_valid
+      end
+    end
+  end
+
+  describe "when nickname is already taken" do
+    before do
+      user_with_same_nickname = @user.dup
+      user_with_same_nickname.nickname = @user.nickname.upcase
+      user_with_same_nickname.save
+    end
+
+    it { should_not be_valid }
+  end
+
+  describe "nickname with mixed case" do
+    let(:mixed_case_nickname) { "ExAMPle" }
+
+    it "should be saved as all lower-case" do
+      @user.nickname = mixed_case_nickname
+      @user.save
+      expect(@user.reload.nickname).to eq mixed_case_nickname.downcase
+    end
   end
 
   describe "when email format is invalid" do
